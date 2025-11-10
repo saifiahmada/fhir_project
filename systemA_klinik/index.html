@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Form Data Pasien - Klinik</title>
+  <style>
+    body { font-family: Arial; background: #f7f7f7; margin: 30px; }
+    h2 { color: #333; }
+    form { background: white; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    label { display: block; margin-top: 10px; }
+    input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 15px; padding: 10px 15px; background: #2196f3; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #1976d2; }
+
+    a.button {
+            display: inline-block;
+            margin-bottom: 10px;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        a.button:hover {
+            background: #218838;
+        }
+        
+  </style>
+</head>
+<body>
+  <h2>🩺 Form Input Data Pasien (Sistem A - Klinik)</h2>
+
+  <form id="formPasien">
+    <label>Nama Pasien:</label>
+    <input type="text" id="nama" required>
+
+    <label>NIK:</label>
+    <input type="text" id="nik" required>
+
+    <label>Tanggal Lahir:</label>
+    <input type="date" id="tgl_lahir" required>
+
+    <label>Diagnosis:</label>
+    <textarea id="diagnosis" required></textarea>
+
+    <button type="submit">Kirim ke Server FHIR</button>
+    <button type="reset">Reset</button>
+  </form>
+
+  <a href="../systemB_server/view.php" class="button">View Hasil</a>
+
+  <p id="hasil" style="margin-top:20px; font-weight:bold;"></p>
+
+  <script>
+    document.getElementById("formPasien").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      // Ambil nilai input
+      const nama = document.getElementById("nama").value;
+      const nik = document.getElementById("nik").value;
+      const tgl_lahir = document.getElementById("tgl_lahir").value;
+      const diagnosis = document.getElementById("diagnosis").value;
+
+      // Format FHIR Patient JSON
+      const fhirData = {
+        resourceType: "Patient",
+        identifier: [{ system: "https://example.org/nik", value: nik }],
+        name: [{ text: nama }],
+        birthDate: tgl_lahir,
+        extension: [{
+          url: "https://example.org/fhir/StructureDefinition/diagnosis",
+          valueString: diagnosis
+        }]
+      };
+
+      // Kirim ke server B
+      const response = await fetch("http://localhost/fhir_project/systemB_server/receive.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fhirData)
+      });
+
+      const result = await response.text();
+      document.getElementById("hasil").innerText = result;
+    });
+  </script>
+</body>
+</html>

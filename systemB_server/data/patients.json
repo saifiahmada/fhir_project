@@ -1,0 +1,23 @@
+[
+    {
+        "resourceType": "Patient",
+        "identifier": [
+            {
+                "system": "https:\/\/example.org\/nik",
+                "value": "1234567890123456"
+            }
+        ],
+        "name": [
+            {
+                "text": "Saifi Ahmada"
+            }
+        ],
+        "birthDate": "2025-10-28",
+        "extension": [
+            {
+                "url": "https:\/\/example.org\/fhir\/StructureDefinition\/diagnosis",
+                "valueString": "sariawan"
+            }
+        ]
+    }
+]
