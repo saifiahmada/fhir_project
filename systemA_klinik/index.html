@@ -24,28 +24,29 @@
         a.button:hover {
             background: #218838;
         }
-        
+
   </style>
 </head>
 <body>
   <h2>🩺 Form Input Data Pasien (Sistem A - Klinik)</h2>
+  
+  <form action="../systemB_server/receive.php" method="post">
+    <label>Nama:</label><br>
+    <input type="text" name="name" required><br><br>
 
-  <form id="formPasien">
-    <label>Nama Pasien:</label>
-    <input type="text" id="nama" required>
+    <label>NIK:</label><br>
+    <input type="text" name="nik" required><br><br>
 
-    <label>NIK:</label>
-    <input type="text" id="nik" required>
+    <label>Tanggal Lahir:</label><br>
+    <input type="date" name="birthDate" required><br><br>
 
-    <label>Tanggal Lahir:</label>
-    <input type="date" id="tgl_lahir" required>
+    <label>Diagnosis:</label><br>
+    <input type="text" name="diagnosis" required><br><br>
 
-    <label>Diagnosis:</label>
-    <textarea id="diagnosis" required></textarea>
-
-    <button type="submit">Kirim ke Server FHIR</button>
-    <button type="reset">Reset</button>
+    <button type="submit">Kirim ke FHIR Server</button>
   </form>
+
+
 
   <a href="../systemB_server/view.php" class="button">View Hasil</a>
 

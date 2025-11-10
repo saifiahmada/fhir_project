@@ -1,23 +1,41 @@
 [
+    
     {
-        "resourceType": "Patient",
-        "identifier": [
-            {
-                "system": "https:\/\/example.org\/nik",
-                "value": "1234567890123456"
+        "Patient": {
+            "resource": {
+                "resourceType": "Patient",
+                "identifier": [
+                    {
+                        "system": "https://example.org/nik",
+                        "value": "0000000000"
+                    }
+                ],
+                "name": [
+                    {
+                        "text": "admin1"
+                    }
+                ],
+                "birthDate": "2025-11-06"
             }
-        ],
-        "name": [
-            {
-                "text": "Saifi Ahmada"
+        },
+        "Observation": {
+            "resource": {
+                "resourceType": "Observation",
+                "status": "final",
+                "code": {
+                    "coding": [
+                        {
+                            "system": "http://loinc.org",
+                            "code": "00000-0",
+                            "display": "Diagnosis"
+                        }
+                    ]
+                },
+                "subject": {
+                    "reference": "Patient/0000000000"
+                },
+                "valueString": "sariawan juga"
             }
-        ],
-        "birthDate": "2025-10-28",
-        "extension": [
-            {
-                "url": "https:\/\/example.org\/fhir\/StructureDefinition\/diagnosis",
-                "valueString": "sariawan"
-            }
-        ]
+        }
     }
 ]

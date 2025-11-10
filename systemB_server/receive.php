@@ -1,34 +1,82 @@
 <?php
-// Header agar bisa menerima request dari browser
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: text/plain");
+header('Content-Type: text/html; charset=utf-8');
 
-// Pastikan method POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $jsonData = file_get_contents("php://input");
-    $data = json_decode($jsonData, true);
+// Pastikan folder data ada
+$dataDir = __DIR__ . '/data';
+if (!file_exists($dataDir)) {
+    mkdir($dataDir, 0777, true);
+}
 
-    // Validasi sederhana
-    if ($data && isset($data['resourceType']) && $data['resourceType'] === 'Patient') {
-        $filename = __DIR__ . "/data/patients.json";
+$file = $dataDir . '/patients.json';
 
-        // Jika file belum ada, buat array kosong
-        if (!file_exists($filename)) {
-            file_put_contents($filename, json_encode([]));
-        }
+// Ambil data dari POST
+$name = $_POST['name'] ?? '';
+$nik = $_POST['nik'] ?? '';
+$birthDate = $_POST['birthDate'] ?? '';
+$diagnosis = $_POST['diagnosis'] ?? '';
 
-        // Ambil data lama dan tambahkan data baru
-        $patients = json_decode(file_get_contents($filename), true);
-        $patients[] = $data;
+// Buat struktur FHIR Patient
+$patient = [
+    "resource" => [
+        "resourceType" => "Patient",
+        "identifier" => [
+            [
+                "system" => "https://example.org/nik",
+                "value" => $nik
+            ]
+        ],
+        "name" => [
+            [
+                "text" => $name
+            ]
+        ],
+        "birthDate" => $birthDate
+    ]
+];
 
-        // Simpan kembali
-        file_put_contents($filename, json_encode($patients, JSON_PRETTY_PRINT));
+// Buat struktur FHIR Observation (diagnosis)
+$observation = [
+    "resource" => [
+        "resourceType" => "Observation",
+        "status" => "final",
+        "code" => [
+            "coding" => [
+                [
+                    "system" => "http://loinc.org",
+                    "code" => "00000-0",
+                    "display" => "Diagnosis"
+                ]
+            ]
+        ],
+        "subject" => [
+            "reference" => "Patient/$nik"
+        ],
+        "valueString" => $diagnosis
+    ]
+];
 
-        echo "✅ Data pasien berhasil disimpan dalam format FHIR JSON!";
-    } else {
-        echo "❌ Data tidak valid. Pastikan format FHIR benar.";
+// Gabungkan dua resource dalam satu entri
+$entry = [
+    "Patient" => $patient,
+    "Observation" => $observation
+];
+
+// Baca file JSON lama
+if (file_exists($file)) {
+    $data = json_decode(file_get_contents($file), true);
+    if (!is_array($data)) {
+        $data = [];
     }
 } else {
-    echo "Gunakan metode POST untuk mengirim data pasien.";
+    $data = [];
 }
+
+// Tambahkan entri baru
+$data[] = $entry;
+
+// Simpan kembali ke file
+file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+
+echo "✅ Data pasien berhasil disimpan dalam format FHIR JSON!";
+echo '<a href="view.php">Lihat Hasil</a>';
 ?>
