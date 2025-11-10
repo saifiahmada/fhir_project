@@ -78,5 +78,8 @@ $data[] = $entry;
 file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 
 echo "✅ Data pasien berhasil disimpan dalam format FHIR JSON!";
+echo "<br>";
 echo '<a href="view.php">Lihat Hasil</a>';
+echo "<br>";
+echo '<a href="../systemA_klinik/index.html">Form Input (SystemA)</a>';
 ?>
